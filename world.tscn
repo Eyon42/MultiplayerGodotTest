@@ -1,0 +1,142 @@
+[gd_scene load_steps=13 format=3 uid="uid://dg26hkmvv6u2w"]
+
+[ext_resource type="Script" path="res://world.gd" id="1_gliv1"]
+[ext_resource type="PackedScene" uid="uid://dksjg16il1glc" path="res://ball.tscn" id="1_ijece"]
+[ext_resource type="Script" path="res://BorderHitbox.gd" id="2_1pi0i"]
+[ext_resource type="PackedScene" uid="uid://5ofgdl62iqug" path="res://player.tscn" id="2_8yi13"]
+[ext_resource type="Script" path="res://Scoreboard.gd" id="4_os7cv"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_4ks6n"]
+size = Vector2(3963, 33)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_gcjma"]
+size = Vector2(3963.25, 33)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_thmuj"]
+size = Vector2(3963.25, 33)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_6mx4g"]
+size = Vector2(3963.25, 33)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_7uvm4"]
+size = Vector2(36, 2492)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_mmjhv"]
+size = Vector2(36, 2501)
+
+[sub_resource type="Theme" id="Theme_pxsel"]
+
+[node name="World" type="Node2D"]
+script = ExtResource("1_gliv1")
+
+[node name="Borders" type="Node2D" parent="."]
+
+[node name="Top" type="Area2D" parent="Borders"]
+collision_layer = 4
+collision_mask = 4
+
+[node name="Hitbox" type="CollisionShape2D" parent="Borders/Top"]
+position = Vector2(1981.5, -16)
+shape = SubResource("RectangleShape2D_4ks6n")
+
+[node name="Top2" type="StaticBody2D" parent="Borders"]
+
+[node name="Hitbox" type="CollisionShape2D" parent="Borders/Top2"]
+position = Vector2(1981.62, -16)
+shape = SubResource("RectangleShape2D_gcjma")
+
+[node name="Bottom2" type="StaticBody2D" parent="Borders"]
+
+[node name="Hitbox" type="CollisionShape2D" parent="Borders/Bottom2"]
+position = Vector2(1982, 664)
+shape = SubResource("RectangleShape2D_thmuj")
+script = ExtResource("2_1pi0i")
+side = "bottom"
+
+[node name="Bottom" type="Area2D" parent="Borders"]
+collision_layer = 4
+collision_mask = 4
+
+[node name="Hitbox" type="CollisionShape2D" parent="Borders/Bottom"]
+position = Vector2(1982, 664)
+shape = SubResource("RectangleShape2D_6mx4g")
+script = ExtResource("2_1pi0i")
+side = "bottom"
+
+[node name="Left" type="Area2D" parent="Borders"]
+collision_layer = 4
+collision_mask = 4
+
+[node name="Hitbox" type="CollisionShape2D" parent="Borders/Left"]
+position = Vector2(-18, 1246)
+shape = SubResource("RectangleShape2D_7uvm4")
+
+[node name="Right" type="Area2D" parent="Borders"]
+collision_layer = 4
+collision_mask = 4
+
+[node name="Hitbox" type="CollisionShape2D" parent="Borders/Right"]
+position = Vector2(1170, 1250.5)
+shape = SubResource("RectangleShape2D_mmjhv")
+script = ExtResource("2_1pi0i")
+side = "rigth"
+
+[node name="Ball" parent="." instance=ExtResource("1_ijece")]
+position = Vector2(576, 324)
+
+[node name="Players" type="Node2D" parent="."]
+
+[node name="Player 1" parent="Players" instance=ExtResource("2_8yi13")]
+position = Vector2(50, 324)
+collision_layer = 3
+collision_mask = 3
+
+[node name="Player 2" parent="Players" instance=ExtResource("2_8yi13")]
+position = Vector2(1102, 324)
+collision_layer = 3
+collision_mask = 3
+side = "p2"
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Control" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/Control/MarginContainer"]
+layout_mode = 2
+
+[node name="Scoreboard" type="Label" parent="CanvasLayer/Control/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme = SubResource("Theme_pxsel")
+theme_type_variation = &"HeaderLarge"
+theme_override_font_sizes/font_size = 50
+text = "0 - 0"
+horizontal_alignment = 1
+script = ExtResource("4_os7cv")
+
+[connection signal="score_updated" from="." to="CanvasLayer/Control/MarginContainer/VBoxContainer/Scoreboard" method="_on_world_score_updated"]
+[connection signal="area_entered" from="Borders/Top" to="." method="_on_top_area_entered"]
+[connection signal="area_entered" from="Borders/Bottom" to="." method="_on_bottom_area_entered"]
+[connection signal="area_entered" from="Borders/Left" to="." method="_on_left_area_entered"]
+[connection signal="area_entered" from="Borders/Right" to="." method="_on_right_area_entered"]
+[connection signal="resized" from="CanvasLayer/Control" to="Borders/Bottom2/Hitbox" method="_on_control_resized"]
+[connection signal="resized" from="CanvasLayer/Control" to="Borders/Bottom/Hitbox" method="_on_control_resized"]
+[connection signal="resized" from="CanvasLayer/Control" to="Borders/Right/Hitbox" method="_on_control_resized"]
+[connection signal="resized" from="CanvasLayer/Control" to="Players/Player 2" method="_on_control_resized"]
