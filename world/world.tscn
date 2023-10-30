@@ -1,10 +1,10 @@
 [gd_scene load_steps=13 format=3 uid="uid://dg26hkmvv6u2w"]
 
-[ext_resource type="Script" path="res://world.gd" id="1_gliv1"]
-[ext_resource type="PackedScene" uid="uid://dksjg16il1glc" path="res://ball.tscn" id="1_ijece"]
-[ext_resource type="Script" path="res://BorderHitbox.gd" id="2_1pi0i"]
-[ext_resource type="PackedScene" uid="uid://5ofgdl62iqug" path="res://player.tscn" id="2_8yi13"]
-[ext_resource type="Script" path="res://Scoreboard.gd" id="4_os7cv"]
+[ext_resource type="Script" path="res://world/world.gd" id="1_gliv1"]
+[ext_resource type="PackedScene" uid="uid://dksjg16il1glc" path="res://world/ball/ball.tscn" id="1_ijece"]
+[ext_resource type="PackedScene" uid="uid://5ofgdl62iqug" path="res://world/player/player.tscn" id="2_8yi13"]
+[ext_resource type="Script" path="res://world/BorderHitbox.gd" id="2_yar2r"]
+[ext_resource type="Script" path="res://world/Scoreboard.gd" id="4_os7cv"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_4ks6n"]
 size = Vector2(3963, 33)
@@ -28,6 +28,8 @@ size = Vector2(36, 2501)
 
 [node name="World" type="Node2D"]
 script = ExtResource("1_gliv1")
+PlayerScene = ExtResource("2_8yi13")
+Ball = ExtResource("1_ijece")
 
 [node name="Borders" type="Node2D" parent="."]
 
@@ -50,7 +52,7 @@ shape = SubResource("RectangleShape2D_gcjma")
 [node name="Hitbox" type="CollisionShape2D" parent="Borders/Bottom2"]
 position = Vector2(1982, 664)
 shape = SubResource("RectangleShape2D_thmuj")
-script = ExtResource("2_1pi0i")
+script = ExtResource("2_yar2r")
 side = "bottom"
 
 [node name="Bottom" type="Area2D" parent="Borders"]
@@ -60,7 +62,7 @@ collision_mask = 4
 [node name="Hitbox" type="CollisionShape2D" parent="Borders/Bottom"]
 position = Vector2(1982, 664)
 shape = SubResource("RectangleShape2D_6mx4g")
-script = ExtResource("2_1pi0i")
+script = ExtResource("2_yar2r")
 side = "bottom"
 
 [node name="Left" type="Area2D" parent="Borders"]
@@ -78,24 +80,10 @@ collision_mask = 4
 [node name="Hitbox" type="CollisionShape2D" parent="Borders/Right"]
 position = Vector2(1170, 1250.5)
 shape = SubResource("RectangleShape2D_mmjhv")
-script = ExtResource("2_1pi0i")
+script = ExtResource("2_yar2r")
 side = "rigth"
 
-[node name="Ball" parent="." instance=ExtResource("1_ijece")]
-position = Vector2(576, 324)
-
 [node name="Players" type="Node2D" parent="."]
-
-[node name="Player 1" parent="Players" instance=ExtResource("2_8yi13")]
-position = Vector2(50, 324)
-collision_layer = 3
-collision_mask = 3
-
-[node name="Player 2" parent="Players" instance=ExtResource("2_8yi13")]
-position = Vector2(1102, 324)
-collision_layer = 3
-collision_mask = 3
-side = "p2"
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
@@ -131,6 +119,17 @@ text = "0 - 0"
 horizontal_alignment = 1
 script = ExtResource("4_os7cv")
 
+[node name="SpawnPoints" type="Node2D" parent="."]
+
+[node name="0" type="Node2D" parent="SpawnPoints" groups=["PlayerSpawnPoint"]]
+position = Vector2(50, 324)
+
+[node name="1" type="Node2D" parent="SpawnPoints" groups=["PlayerSpawnPoint"]]
+position = Vector2(1102, 324)
+
+[node name="ballSpawn" type="Node2D" parent="SpawnPoints" groups=["BallSpawn"]]
+position = Vector2(576, 324)
+
 [connection signal="score_updated" from="." to="CanvasLayer/Control/MarginContainer/VBoxContainer/Scoreboard" method="_on_world_score_updated"]
 [connection signal="area_entered" from="Borders/Top" to="." method="_on_top_area_entered"]
 [connection signal="area_entered" from="Borders/Bottom" to="." method="_on_bottom_area_entered"]
@@ -139,4 +138,3 @@ script = ExtResource("4_os7cv")
 [connection signal="resized" from="CanvasLayer/Control" to="Borders/Bottom2/Hitbox" method="_on_control_resized"]
 [connection signal="resized" from="CanvasLayer/Control" to="Borders/Bottom/Hitbox" method="_on_control_resized"]
 [connection signal="resized" from="CanvasLayer/Control" to="Borders/Right/Hitbox" method="_on_control_resized"]
-[connection signal="resized" from="CanvasLayer/Control" to="Players/Player 2" method="_on_control_resized"]
